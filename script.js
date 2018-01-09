@@ -274,87 +274,87 @@ var p2 = d3.select('body').append("p").text("clique aqui");
 
 
 //Width and height
-var w = 500;
-var h = 300;
-var padding = 30;
+var g6_w = 500;
+var g6_h = 300;
+var g6_padding = 30;
 
 //Dynamic, random dataset
-var dataset = [];											//Initialize empty array
-var numDataPoints = 50;										//Number of dummy data points to create
-var maxRange = Math.random() * 1000;						//Max range of new values
-for (var i = 0; i < numDataPoints; i++) {					//Loop numDataPoints times
-  var newNumber1 = Math.floor(Math.random() * maxRange);	//New random integer
-  var newNumber2 = Math.floor(Math.random() * maxRange);	//New random integer
-  dataset.push([newNumber1, newNumber2]);					//Add new number to array
+var g6_dataset = [];											//Initialize empty array
+var g6_numDataPoints = 50;										//Number of dummy data points to create
+var g6_maxRange = Math.random() * 1000;						//Max range of new values
+for (var i = 0; i < g6_numDataPoints; i++) {					//Loop numDataPoints times
+  var g6_newNumber1 = Math.floor(Math.random() * g6_maxRange);	//New random integer
+  var g6_newNumber2 = Math.floor(Math.random() * g6_maxRange);	//New random integer
+  g6_dataset.push([g6_newNumber1, g6_newNumber2]);					//Add new number to array
 }
 //Create scale functions
-var xScale = d3.scaleLinear()
-           .domain([0, d3.max(dataset, function(d) { return d[0]; })])
-           .range([padding, w - padding * 2]);
-var yScale = d3.scaleLinear()
-           .domain([0, d3.max(dataset, function(d) { return d[1]; })])
-           .range([h - padding, padding]);
+var g6_xScale = d3.scaleLinear()
+           .domain([0, d3.max(g6_dataset, function(d) { return d[0]; })])
+           .range([g6_padding, g6_w - g6_padding * 2]);
+var g6_yScale = d3.scaleLinear()
+           .domain([0, d3.max(g6_dataset, function(d) { return d[1]; })])
+           .range([g6_h - g6_padding, g6_padding]);
 //Define X axis
-var xAxis = d3.axisBottom()
-          .scale(xScale)
+var g6_xAxis = d3.axisBottom()
+          .scale(g6_xScale)
           .ticks(5);
 //Define Y axis
-var yAxis = d3.axisLeft()
-          .scale(yScale)
+var g6_yAxis = d3.axisLeft()
+          .scale(g6_yScale)
           .ticks(5);
 //Create SVG element
-var svg = d3.select("body")
+var g6_svg = d3.select("body")
       .append("svg")
       .attr("width", w)
       .attr("height", h);
 //Create circles
-svg.selectAll("circle")
-   .data(dataset)
+g6_svg.selectAll("circle")
+   .data(g6_dataset)
    .enter()
    .append("circle")
    .attr("cx", function(d) {
-       return xScale(d[0]);
+       return g6_xScale(d[0]);
    })
    .attr("cy", function(d) {
-       return yScale(d[1]);
+       return g6_yScale(d[1]);
    })
    .attr("r", 2);
 
 //Create X axis
-svg.append("g")
+g6_svg.append("g")
   .attr("class", "axis")
-  .attr("transform", "translate(0," + (h - padding) + ")")
-  .call(xAxis);
+  .attr("transform", "translate(0," + (g6_h - g6_padding) + ")")
+  .call(g6_xAxis);
 
 //Create Y axis
-svg.append("g")
+g6_svg.append("g")
   .attr("class", "axis")
-  .attr("transform", "translate(" + padding + ",0)")
-  .call(yAxis);
+  .attr("transform", "translate(" + g6_padding + ",0)")
+  .call(g6_yAxis);
 //On click, update with new data			
 p2.on("click", function() {
     //New values for dataset
-    var numValues = dataset.length;						 		//Count original length of dataset
-    var maxRange = Math.random() * 1000;						//Max range of new values
-    dataset = [];  						 				 		//Initialize empty array
-    for (var i = 0; i < numValues; i++) {				 		//Loop numValues times
-      var newNumber1 = Math.floor(Math.random() * maxRange);	//New random integer
-      var newNumber2 = Math.floor(Math.random() * maxRange);	//New random integer
-      dataset.push([newNumber1, newNumber2]);					//Add new number to array
+    var g6_numValues = g6_dataset.length;						 		//Count original length of dataset
+    var g6_maxRange = Math.random() * 1000;						//Max range of new values
+    g6_dataset = [];  						 				 		//Initialize empty array
+    for (var i = 0; i < g6_numValues; i++) {				 		//Loop numValues times
+      var g6_newNumber1 = Math.floor(Math.random() * g6_maxRange);	//New random integer
+      var g6_newNumber2 = Math.floor(Math.random() * g6_maxRange);	//New random integer
+      g6_dataset.push([g6_newNumber1, g6_newNumber2]);					//Add new number to array
     }
     
     //Update scale domains
-    xScale.domain([0, d3.max(dataset, function(d) { return d[0]; })]);
-    yScale.domain([0, d3.max(dataset, function(d) { return d[1]; })]);
+    g6_xScale.domain([0, d3.max(g6_dataset, function(d) { return d[0]; })]);
+    g6_yScale.domain([0, d3.max(g6_dataset, function(d) { return d[1]; })]);
     //Update all circles
-    svg.selectAll("circle")
-       .data(dataset)
+    g6_svg.selectAll("circle")
+       .data(g6_dataset)
        .transition()
           .duration(1000)
        .attr("cx", function(d) {
-           return xScale(d[0]);
+           return g6_xScale(d[0]);
        })
        .attr("cy", function(d) {
-           return yScale(d[1]);
+           return g6_yScale(d[1]);
        });
   });
