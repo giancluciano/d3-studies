@@ -322,13 +322,13 @@ g6_svg.selectAll("circle")
 
 //Create X axis
 g6_svg.append("g")
-  .attr("class", "axis")
+  .attr("class", "x axis")
   .attr("transform", "translate(0," + (g6_h - g6_padding) + ")")
   .call(g6_xAxis);
 
 //Create Y axis
 g6_svg.append("g")
-  .attr("class", "axis")
+  .attr("class", "y axis")
   .attr("transform", "translate(" + g6_padding + ",0)")
   .call(g6_yAxis);
 //On click, update with new data			
@@ -342,19 +342,34 @@ p2.on("click", function() {
       var g6_newNumber2 = Math.floor(Math.random() * g6_maxRange);	//New random integer
       g6_dataset.push([g6_newNumber1, g6_newNumber2]);					//Add new number to array
     }
+
+    //update x-axis
+    g6_svg.select(".x.axis")
+      .transition()
+      .duration(1000)
+      .call(g6_xAxis);
+
+    
+    //update y-axis
+    g6_svg.select(".y.axis")
+      .transition()
+      .duration(1000)
+      .call(g6_yAxis);
     
     //Update scale domains
     g6_xScale.domain([0, d3.max(g6_dataset, function(d) { return d[0]; })]);
     g6_yScale.domain([0, d3.max(g6_dataset, function(d) { return d[1]; })]);
     //Update all circles
     g6_svg.selectAll("circle")
-       .data(g6_dataset)
-       .transition()
-          .duration(1000)
-       .attr("cx", function(d) {
-           return g6_xScale(d[0]);
-       })
-       .attr("cy", function(d) {
-           return g6_yScale(d[1]);
-       });
+        .data(g6_dataset)
+        .transition()
+        .duration(1000)
+        .on("start",function() { d3.select(this).attr("fill","magenta").attr("r",3) })
+        .attr("cx", function(d) {
+          return g6_xScale(d[0]);
+        })
+        .attr("cy", function(d) {
+          return g6_yScale(d[1]);
+        })
+        .on("end",function() { d3.select(this).transition().attr("fill","black").attr("r",2) });
   });
