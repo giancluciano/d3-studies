@@ -307,18 +307,32 @@ var g6_svg = d3.select("body")
       .append("svg")
       .attr("width", w)
       .attr("height", h);
+
+//create clipPath
+
+g6_svg.append("clipPath")
+      .attr("id","chart-area")
+      .append("rect")
+      .attr("x",g6_padding)
+      .attr("y",g6_padding)
+      .attr("width",g6_w - g6_padding *3)
+      .attr("height",g6_h,g6_padding *2)
+
 //Create circles
-g6_svg.selectAll("circle")
-   .data(g6_dataset)
-   .enter()
-   .append("circle")
-   .attr("cx", function(d) {
-       return g6_xScale(d[0]);
-   })
-   .attr("cy", function(d) {
-       return g6_yScale(d[1]);
-   })
-   .attr("r", 2);
+g6_svg.append("g")
+    .attr("id","circles")
+    .attr("clip-path","url(#chart-area)")
+    .selectAll("circle")
+    .data(g6_dataset)
+    .enter()
+    .append("circle")
+    .attr("cx", function(d) {
+      return g6_xScale(d[0]);
+    })
+    .attr("cy", function(d) {
+      return g6_yScale(d[1]);
+    })
+    .attr("r", 2);
 
 //Create X axis
 g6_svg.append("g")
