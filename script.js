@@ -155,116 +155,253 @@ svg.append("g")
 
 
 
-var p1 = d3.select('body').append("p").text("clique aqui");
+
+
+
+var p1 = d3.select('body').append("p").text("clique aqui para adicionar");
+var p11 = d3.select('body').append("p").text("clique aqui para remover");
 //quinto
 
 var g5_w = 600;
 var g5_h = 250;
 
-var g5_dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
-        11, 12, 15, 20, 18, 17, 16, 18, 23, 25 ];
+var g5_dataset = [];
+var g5_numValues = 25;
+var g5_maxValue = 100;
+var key = function(d) { return d.key; };
+
+for (var i = 0; i < g5_numValues; i++) {
+  var g5_newNumber = Math.floor(Math.random()*g5_maxValue);
+  
+  g5_dataset.push({key:i,value:g5_newNumber});
+}
+
+
 var g5_xScale = d3.scaleBand()
-        .domain(d3.range(g5_dataset.length))
-        .rangeRound([0, w])
-        .paddingInner(0.05);
+                  .domain(d3.range(g5_dataset.length))
+                  .rangeRound([0, w])
+                  .paddingInner(0.05);
+
 var g5_yScale = d3.scaleLinear()
-        .domain([0, d3.max(g5_dataset)])
-        .range([0, g5_h]);
+                    .domain([0, d3.max(g5_dataset,function(d) { return d.value; })])
+                    .range([0, g5_h]);
 
 //Create SVG element
 var g5_svg = d3.select("body")
-      .append("svg")
-      .attr("width", g5_w)
-      .attr("height", g5_h);
+                  .append("svg")
+                  .attr("width", g5_w)
+                  .attr("height", g5_h);
 //Create bars
 g5_svg.selectAll("rect")
-    .data(g5_dataset)
+    .data(g5_dataset,key)
     .enter()
     .append("rect")
     .attr("x", function(d, i) {
         return g5_xScale(i);
     })
     .attr("y", function(d) {
-        return h - g5_yScale(d);
+        return h - g5_yScale(d.value);
     })
     .attr("width", g5_xScale.bandwidth())
     .attr("height", function(d) {
-        return g5_yScale(d);
+        return g5_yScale(d.value);
     })
     .attr("fill", function(d) {
-    return "rgb(0, 0, " + Math.round(d * 10) + ")";
+    return "rgb(0, 0, " + Math.round(d.value * 10) + ")";
     });
 //Create labels
 g5_svg.selectAll("text")
-    .data(g5_dataset)
+    .data(g5_dataset,key)
     .enter()
     .append("text")
     .text(function(d) {
-        return d;
+        return d.value;
     })
     .attr("text-anchor", "middle")
     .attr("x", function(d, i) {
         return g5_xScale(i) + g5_xScale.bandwidth() / 2;
     })
     .attr("y", function(d) {
-        return h - g5_yScale(d) + 14;
+        return h - g5_yScale(d.value) + 14;
     })
     .attr("font-family", "sans-serif")
     .attr("font-size", "11px")
     .attr("fill", "white");
 
     
-  p1.on("click",function() { 
+p1.on("click",function() { 
 
-  var g5_numValues = g5_dataset.length;
+          var g5_numValues = g5_dataset.length + 1;
 
-  g5_dataset = [];
+          g5_dataset = [];
 
-  g5_maxValue = 100;
+          g5_maxValue = 100;
 
-  for (var i = 0; i < g5_numValues; i++) {
-    var g5_newNumber = Math.floor(Math.random()*g5_maxValue);
-    
-    g5_dataset.push(g5_newNumber);
-  }
+          for (var i = 0; i < g5_numValues; i++) {
+            var g5_newNumber = Math.floor(Math.random()*g5_maxValue);
+            
+            g5_dataset.push({key:i,value:g5_newNumber});
+          }
 
-  var g5_yScale = d3.scaleLinear()
-        .domain([0,d3.max(g5_dataset)])
-        .range([0,h]);
 
-  var g5_colorScale = d3.scaleLinear()
-        .domain([0,d3.max(g5_dataset)])
-        .range([0,25]);
 
-  g5_svg.selectAll("rect")
-    .data(g5_dataset)
-    .transition()
-    .duration(function(d, i) { return 1000 + i * 100; })
-    .attr("y", function(d) {
-      return h - g5_yScale(d);
-    })
-    .attr("height", function(d) {
-      return g5_yScale(d);
-    })
-    .attr("fill", function(d) {
-      return "rgb(0, 0, " + Math.round(g5_colorScale(d) * 10) + ")";
-    });
+          g5_xScale.domain(d3.range(g5_dataset.length))
+          g5_yScale.domain([0,d3.max(g5_dataset,function(d) { return d.value; })]);
 
-  g5_svg.selectAll("text")
-    .data(g5_dataset)
-    .transition()
-    .duration(function(d, i) { return 1000 + i * 100; })
-    .text(function(d) {
-      return d;
-    })
-    .attr("x", function(d, i) {
-      return g5_xScale(i) + g5_xScale.bandwidth() / 2;
-    })
-    .attr("y", function(d) {
-      return h - g5_yScale(d) + 14;
-    })
+          var g5_colorScale = d3.scaleLinear()
+                .domain([0,d3.max(g5_dataset,function(d) { return d.value; })])
+                .range([0,25]);
+
+          var g5_bars = g5_svg.selectAll("rect")
+            .data(g5_dataset,key);
+
+            g5_bars.enter()
+                    .append("rect")
+                    .attr("x",g5_w)
+                    .attr("y", function(d) {
+                      return h - g5_yScale(d.value);
+                    })
+                    .attr("width",g5_xScale.bandwidth())
+                    .attr("height", function(d) {
+                      return g5_yScale(d.value);
+                    })
+                    .attr("fill", function(d) {
+                      return "rgb(0, 0, " + Math.round(g5_colorScale(d.value) * 10) + ")";
+                    })
+                    .merge(g5_bars)
+                    .transition()
+                    .duration(500)
+                    .attr("x", function(d, i) {				//Set new x position, based on the updated xScale
+                      return g5_xScale(i);
+                    })
+                    .attr("y", function(d) {				//Set new y position, based on the updated yScale
+                      return g5_h - g5_yScale(d.value);
+                    })
+                    .attr("width", g5_xScale.bandwidth())		//Set new width value, based on the updated xScale
+                    .attr("height", function(d) {			//Set new height value, based on the updated yScale
+                      return g5_yScale(d.value);
+                    }).attr("fill", function(d) {
+                      return "rgb(0, 0, " + Math.round(g5_colorScale(d.value) * 10) + ")";
+                    });
+
+          var g5_texts = g5_svg.selectAll("text")
+                    .data(g5_dataset,key);
+
+          g5_texts.enter()
+                    .append("text")
+                    .text(function(d) {
+                      return d.value;
+                    })
+                    .attr("text-anchor", "middle")
+                    .attr("x", function(d, i) {
+                        return g5_xScale(i) + g5_xScale.bandwidth() / 2;
+                    })
+                    .attr("y", function(d) {
+                        return h - g5_yScale(d.value) + 14;
+                    })
+                    .attr("font-family", "sans-serif")
+                    .attr("font-size", "11px")
+                    .attr("fill", "white")
+                    .merge(g5_texts)
+                    .transition()
+                    .duration(500)
+                    .text(function(d) {
+                      return d.value;
+                    })
+                    .attr("x", function(d, i) {
+                      return g5_xScale(i) + g5_xScale.bandwidth() / 2;
+                    })
+                    .attr("y", function(d) {
+                      return g5_h - g5_yScale(d.value) + 14;
+                    })
 
 })
+
+p11.on("click",function() { 
+              g5_dataset.shift();
+
+              g5_xScale.domain(d3.range(g5_dataset.length));
+              g5_yScale.domain([0,d3.max(g5_dataset,function(d) { return d.value; })]);
+
+              var g5_colorScale = d3.scaleLinear()
+                .domain([0,d3.max(g5_dataset,function(d) { return d.value; })])
+                .range([0,25]);
+              var g5_bars = g5_svg.selectAll("rect")
+                          .data(g5_dataset,key);
+
+              g5_bars.enter()
+                          .append("rect")
+                          .attr("x",g5_w)
+                          .attr("y", function(d) {
+                            return h - g5_yScale(d.value);
+                          })
+                          .attr("width",g5_xScale.bandwidth())
+                          .attr("height", function(d) {
+                            return g5_yScale(d.value); 
+                          })
+                          .attr("fill", function(d) {
+                            return "rgb(0, 0, " + Math.round(g5_colorScale(d.value) * 10) + ")";
+                          })
+                          .merge(g5_bars)
+                          .transition()
+                          .duration(500)
+                          .attr("x", function(d, i) {				//Set new x position, based on the updated xScale
+                            return g5_xScale(i);
+                          })
+                          .attr("y", function(d) {				//Set new y position, based on the updated yScale
+                            return g5_h - g5_yScale(d.value);
+                          })
+                          .attr("width", g5_xScale.bandwidth())		//Set new width value, based on the updated xScale
+                          .attr("height", function(d) {			//Set new height value, based on the updated yScale
+                            return g5_yScale(d.value);
+                          }).attr("fill", function(d) {
+                            return "rgb(0, 0, " + Math.round(g5_colorScale(d.value) * 10) + ")";
+                          });
+
+              g5_bars.exit()
+                          .transition()
+                          .duration(500)
+                          .attr("x",-g5_xScale.bandwidth())
+                          .remove();
+
+
+              var g5_texts = g5_svg.selectAll("text")
+                          .data(g5_dataset,key);
+
+                          g5_texts.enter()
+                          .append("text")
+                          .text(function(d) {
+                            return d.value;
+                          })
+                          .attr("text-anchor", "middle")
+                          .attr("x", function(d, i) {
+                              return g5_xScale(i) + g5_xScale.bandwidth() / 2;
+                          })
+                          .attr("y", function(d) {
+                              return h - g5_yScale(d.value) + 14;
+                          })
+                          .attr("font-family", "sans-serif")
+                          .attr("font-size", "11px")
+                          .attr("fill", "white")
+                          .merge(g5_texts)
+                          .transition()
+                          .duration(500)
+                          .text(function(d) {
+                            return d.value;
+                          })
+                          .attr("x", function(d, i) {
+                            return g5_xScale(i) + g5_xScale.bandwidth() / 2;
+                          })
+                          .attr("y", function(d) {
+                            return g5_h - g5_yScale(d.value) + 14;
+                          });
+              g5_texts.exit()
+                      .transition()
+                      .duration(500)
+                      .attr("x",-g5_xScale.bandwidth())
+                      .remove();
+
+ })
 
 
 
